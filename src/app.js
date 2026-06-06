@@ -1,0 +1,45 @@
+const express = require('express');
+const app = express();
+require('dotenv').config();
+const multer = require('multer');
+const uploadImage = require('./services/storage.services.js');
+const postModel = require('./models/post.model.js');
+//required files
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+const upload = multer({ Storage : multer.memoryStorage() });
+//middlewares
+
+const PORT = process.env.PORT || 5000;
+app.get('/', (req, res) => {
+  res.send('Hello i am Mini Insta!');
+});
+
+//api to create a post
+app.post('/create-post', upload.single('post'), async (req, res) => {
+   console.log(req.body);
+   console.log(req.file);
+   
+   const result = await uploadImage(req.file.buffer);
+   console.log(result);
+  try {
+   const post =await postModel.create({
+    post:result.url,
+    caption:req.body.caption
+   })
+   res.status(201).json({message : "post created successfully", post});
+  }
+  catch(err){
+    console.error(err);
+    res.status(500).json({message : "something went wrong"});
+  }
+});
+
+//api to get all posts
+app.get('/posts',async (req,res)=>{
+  const posts= await postModel.find();
+  res.json({message : "posts retrieved successfully", posts});
+});
+module.exports = app;
