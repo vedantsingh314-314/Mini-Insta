@@ -4,12 +4,14 @@ require('dotenv').config();
 const multer = require('multer');
 const uploadImage = require('./services/storage.services.js');
 const postModel = require('./models/post.model.js');
+const cors=require('cors')
 //required files
 
 app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
-const upload = multer({ Storage : multer.memoryStorage() });
+const upload = multer({ storage : multer.memoryStorage() });
 //middlewares
 
 const PORT = process.env.PORT || 5000;

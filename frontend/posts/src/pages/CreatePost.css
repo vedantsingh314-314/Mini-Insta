@@ -1,0 +1,22 @@
+.create-post-section {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.create-post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.create-post-form input,
+.create-post-form textarea {
+    width: 100%;
+    padding: 10px;
+}
+
+.create-post-form button {
+    padding: 12px;
+    cursor: pointer;
+}
