@@ -21,22 +21,31 @@ app.get('/', (req, res) => {
 
 //api to create a post
 app.post('/create-post', upload.single('post'), async (req, res) => {
-   console.log(req.body);
-   console.log(req.file);
-   
-   const result = await uploadImage(req.file.buffer);
-   console.log(result);
+  // api to create a post
+app.post('/create-post', upload.single('post'), async (req, res) => {
   try {
-   const post =await postModel.create({
-    post:result.url,
-    caption:req.body.caption
-   })
-   res.status(201).json({message : "post created successfully", post});
-  }
-  catch(err){
+    // 1. Check if the file exists before doing anything else
+    if (!req.file) {
+      return res.status(400).json({ message: "Image file is required" });
+    }
+
+    // 2. Now it is safe to read the buffer and upload to ImageKit
+    const result = await uploadImage(req.file.buffer);
+    
+    // 3. Save the URL and caption to the database
+    const post = await postModel.create({
+      post: result.url,
+      caption: req.body.caption
+    });
+
+    res.status(201).json({ message: "post created successfully", post });
+
+  } catch (err) {
+    // 4. This catch block now handles database errors AND ImageKit upload errors
     console.error(err);
-    res.status(500).json({message : "something went wrong"});
+    res.status(500).json({ message: "something went wrong" });
   }
+});
 });
 
 //api to get all posts
